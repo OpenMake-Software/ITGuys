@@ -1,28 +1,26 @@
 
 
+import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
 /* new for XML parsing */
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.xml.sax.InputSource;
 /* end new */
 
@@ -34,32 +32,32 @@ public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection m_conn;
 	
-	private int version = 2;
+	private int version = 1;
 
     /**
      * Default constructor. 
      */
     public Home() {
-        // TODO Auto-generated constructor stub
     }
     
     public void ShowPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	try {
-    		// Class.forName("oracle.jdbc.OracleDriver");
+    		ServletContext servletContext = getServletContext();
+    		String basedir = servletContext.getRealPath(File.separator);
+    		
     		response.getWriter().append("About to call Class.forName\n");
     		Class.forName("org.postgresql.Driver");
     		response.getWriter().append("Done that\n");
     		List<Person> people = new ArrayList<Person>();
-    		String basedir = System.getProperty("catalina.base");
     		response.getWriter().append("basedir="+basedir+"\n");
-    		String configdir = basedir + "/webapps";
+    		String configdir = basedir + "/WEB-INF";
     		XPath xpath = XPathFactory.newInstance().newXPath();
     		InputSource inputSource = new InputSource(configdir+"/config.xml");
     		String env = xpath.evaluate("/ITGuys/environment", inputSource);
     		String jdbc = xpath.evaluate("/ITGuys/jdbc",inputSource);
 		String buildno = xpath.evaluate("/ITGuys/buildno",inputSource);
     		response.getWriter().append("env="+env+" jdbc="+jdbc+" buildno="+buildno+"\n");
-    		m_conn = DriverManager.getConnection("jdbc:"+jdbc,"postgres","postgres");
+    		m_conn = DriverManager.getConnection(jdbc,"postgres","postgres");
     		Statement st = m_conn.createStatement();
     		ResultSet rs = null;
     		switch(version) {
@@ -90,10 +88,9 @@ public class Home extends HttpServlet {
     	    	people.add(p);
     	    }
     	    rs.close();
-    	    rs = st.executeQuery("SELECT version FROM demo_version");
-    	    rs.next();
-    	    String szVersion = rs.getString(1);
-    	    rs.close();
+//    	    rs = st.executeQuery("SELECT version FROM demo_version");
+//    	    rs.next();
+//    	    rs.close();
     	    st.close();
     	    request.setAttribute("people",people);
     	    request.setAttribute("env",env);
@@ -106,11 +103,9 @@ public class Home extends HttpServlet {
     	} 
     	catch (ClassNotFoundException e) {
     		response.getWriter().append("ClassNotFoundException");
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	catch (IOException e) {
-			// TODO Auto-generated catch block
 			response.getWriter().append("IO Exception: "+e.getMessage());
 			e.printStackTrace();
 		}
@@ -127,7 +122,6 @@ public class Home extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Start from: ").append(request.getContextPath());
 		response.getWriter().append("\n");
 		ShowPage(request,response);
@@ -137,7 +131,6 @@ public class Home extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

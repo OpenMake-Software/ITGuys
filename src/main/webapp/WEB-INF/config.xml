@@ -1,0 +1,5 @@
+<ITGuys>
+    <environment>Dev</environment>
+    <jdbc>jdbc:postgresql://localhost:5432/postgres</jdbc>
+    <buildno>12</buildno>
+</ITGuys>
