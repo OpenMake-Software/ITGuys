@@ -55,7 +55,12 @@ public class Home extends HttpServlet {
     		InputSource inputSource = new InputSource(configdir+"/config.xml");
     		String env = xpath.evaluate("/ITGuys/environment", inputSource);
     		String jdbc = xpath.evaluate("/ITGuys/jdbc",inputSource);
-		String buildno = xpath.evaluate("/ITGuys/buildno",inputSource);
+		    String buildno = xpath.evaluate("/ITGuys/buildno",inputSource);
+		    version = new Integer(System.getProperty("TCNODE")).intValue();
+		    
+		    if (version == 0)
+		     version = 1;
+		    
     		response.getWriter().append("env="+env+" jdbc="+jdbc+" buildno="+buildno+"\n");
     		m_conn = DriverManager.getConnection(jdbc,"postgres","postgres");
     		Statement st = m_conn.createStatement();
