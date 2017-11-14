@@ -56,15 +56,18 @@ public class Home extends HttpServlet {
     		String env = xpath.evaluate("/ITGuys/environment", inputSource);
     		String jdbc = xpath.evaluate("/ITGuys/jdbc",inputSource);
 		    String buildno = xpath.evaluate("/ITGuys/buildno",inputSource);
-		    version = new Integer(System.getProperty("TCNODE")).intValue();
-		    
-		    if (version == 0)
-		     version = 1;
 		    
     		response.getWriter().append("env="+env+" jdbc="+jdbc+" buildno="+buildno+"\n");
     		m_conn = DriverManager.getConnection(jdbc,"postgres","postgres");
     		Statement st = m_conn.createStatement();
     		ResultSet rs = null;
+    		
+    		rs = st.executeQuery("SELECT version FROM demo_version");
+    		while (rs.next()) {
+    			version = rs.getInt(1);
+    		}
+    		rs.close();
+    		
     		switch(version) {
     		case 1:
     			rs = st.executeQuery("SELECT first_name,surname FROM itguys ORDER BY surname");
