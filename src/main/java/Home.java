@@ -57,8 +57,8 @@ public class Home extends HttpServlet {
     		String jdbc = xpath.evaluate("/ITGuys/jdbc",inputSource);
     		String buildno = xpath.evaluate("/ITGuys/buildno",inputSource);
 		    String str = System.getProperty("TCNODE");
-		    String parts = str.split("-");
-		    if (parts != null && parts.length() == 2)
+		    String parts[] = str.split("-");
+		    if (parts != null && parts.length == 2)
 		    {
 		     env = parts[0];
 		     buildno = parts[1];
